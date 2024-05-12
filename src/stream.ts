@@ -35,9 +35,7 @@ const ErrorForAddError = new Error("cannot add error to closed stream");
  * Error to be thrown when there are multiple listeners to a non-broadcast stream
  */
 /** @ignore */
-const ErrorForListen = new Error(
-  "cannot have more than one listener on the stream"
-);
+const ErrorForListen = new Error("cannot have more than one listener on the stream");
 
 /** @ignore */
 type StreamEventsMap = {
@@ -72,7 +70,7 @@ export default class Stream<T> implements StreamInterface<T> {
         streamController.add(value);
         streamController.close();
       })
-      .catch((e) => {
+      .catch((e: any) => {
         streamController.addError(e);
         streamController.close();
       });
@@ -270,9 +268,7 @@ export default class Stream<T> implements StreamInterface<T> {
    */
   removeEventListener(name: string, callback: StreamCallback) {
     if (!this._eventCallbacks[name]) return;
-    this._eventCallbacks[name] = this._eventCallbacks[name].filter(
-      (c) => c !== callback
-    );
+    this._eventCallbacks[name] = this._eventCallbacks[name].filter((c) => c !== callback);
   }
 
   /**
@@ -375,7 +371,7 @@ export default class Stream<T> implements StreamInterface<T> {
    *
    * @param equals - function that checks if two values are the same
    */
-  distinct(equals?: (oldVal: T|null, newVal: T|null) => boolean): StreamInterface<T> {
+  distinct(equals?: (oldVal: T | null, newVal: T | null) => boolean): StreamInterface<T> {
     if (!equals) {
       equals = (oldVal, newVal) => oldVal === newVal;
     }
@@ -443,7 +439,7 @@ export default class Stream<T> implements StreamInterface<T> {
         (data: T) => {
           try {
             if (condition(data)) return cancelAndFulfill(data, sub, resolve);
-          } catch (e) {
+          } catch (e: any) {
             cancelAndFulfill(e, sub, reject);
           }
         },
@@ -485,10 +481,7 @@ export default class Stream<T> implements StreamInterface<T> {
    * @param reducer - fn that returns the new value by taking previous and current messages
    * @param initialValue - the initial value
    */
-  reduce(
-    reducer: (prev: any, next: T) => any,
-    initialValue?: any
-  ): Promise<any> {
+  reduce(reducer: (prev: any, next: T) => any, initialValue?: any): Promise<any> {
     let seenFirst = false;
     if (initialValue !== undefined) {
       seenFirst = true;
@@ -698,7 +691,7 @@ class _takeWhileStream<T> extends _filteringStream {
         super.add(data);
         return;
       }
-    } catch (e) {
+    } catch (e: any) {
       super.addError(e);
     }
     this.close();
@@ -731,7 +724,7 @@ class _skipWhileStream<T> extends _filteringStream {
   add(data: T) {
     try {
       if (this._isSkipping && this.condition(data)) return;
-    } catch (e) {
+    } catch (e: any) {
       this._isSkipping = false;
       return super.addError(e);
     }
@@ -756,7 +749,7 @@ class _whereStream<T> extends _filteringStream {
       if (this.condition(data)) {
         super.add(data);
       }
-    } catch(e) {
+    } catch (e: any) {
       super.addError(e);
     }
   }
@@ -771,17 +764,17 @@ class _distinctStream<T> extends _filteringStream {
    * @param parent - the parent stream
    * @param equals - the function that tests if two values are equal
    */
-  constructor(parent: Stream<T>, private equals: (oldVal: T|null, newVal: T|null) => boolean) {
+  constructor(parent: Stream<T>, private equals: (oldVal: T | null, newVal: T | null) => boolean) {
     super(parent);
   }
 
   add(data: T) {
     try {
       if (!this.equals(this._oldVal, data)) {
-        this._oldVal = data
+        this._oldVal = data;
         super.add(data);
       }
-    } catch(e) {
+    } catch (e: any) {
       super.addError(e);
     }
   }
