@@ -318,6 +318,93 @@ export default class Stream<T> implements StreamInterface<T> {
   }
 
   /**
+   * Derives new stream that emits mapped values, accepting promises.
+   *
+   * When the transform function returns a promise, the stream will pause until the promise resolves.
+   *
+   * @param transform - the function that maps data of type T => Promise<U> | U
+   * @template T original data type
+   * @template U new data type
+   */
+  asyncMap<U>(transform: (data: T) => Promise<U> | U): StreamInterface<U> {
+    const streamController = new StreamController<U>();
+
+    streamController.onListen = () => {
+      const subscription = this.listen(async (data) => {
+        let newValue: U | Promise<U>;
+        try {
+          newValue = transform(data);
+        } catch (e: any) {
+          streamController.addError(e);
+          return;
+        }
+
+        if (newValue instanceof Promise) {
+          subscription.pause();
+          try {
+            const value = await newValue;
+            streamController.add(value);
+          } catch (e: any) {
+            streamController.addError(e);
+          }
+          subscription.resume();
+        } else {
+          streamController.add(newValue);
+        }
+      });
+
+      streamController.onCancel = () => subscription.cancel();
+      streamController.onPause = () => subscription.pause();
+      streamController.onResume = () => subscription.resume();
+    };
+
+    return streamController.stream;
+  }
+
+  // Stream<E> asyncMap<E>(FutureOr<E> convert(T event)) {
+  //   _StreamControllerBase<E> controller;
+  //   if (isBroadcast) {
+  //     controller = _SyncBroadcastStreamController<E>(null, null);
+  //   } else {
+  //     controller = _SyncStreamController<E>(null, null, null, null);
+  //   }
+
+  //   controller.onListen = () {
+  //     StreamSubscription<T> subscription = this.listen(null,
+  //         onError: controller._addError, // Avoid Zone error replacement.
+  //         onDone: controller.close);
+  //     FutureOr<Null> add(E value) {
+  //       controller.add(value);
+  //     }
+
+  //     final addError = controller._addError;
+  //     final resume = subscription.resume;
+  //     subscription.onData((T event) {
+  //       FutureOr<E> newValue;
+  //       try {
+  //         newValue = convert(event);
+  //       } catch (e, s) {
+  //         controller.addError(e, s);
+  //         return;
+  //       }
+  //       if (newValue is Future<E>) {
+  //         subscription.pause();
+  //         newValue.then(add, onError: addError).whenComplete(resume);
+  //       } else {
+  //         controller.add(newValue);
+  //       }
+  //     });
+  //     controller.onCancel = subscription.cancel;
+  //     if (!isBroadcast) {
+  //       controller
+  //         ..onPause = subscription.pause
+  //         ..onResume = resume;
+  //     }
+  //   };
+  //   return controller.stream;
+  // }
+
+  /**
    * Derives new stream that consumes only the first *n* messages of the current stream.
    *
    * @param n - the number of messages to consume
