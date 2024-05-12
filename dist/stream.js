@@ -647,6 +647,11 @@ class _filteringStream extends Stream {
         this.parent = parent;
         this._sub = null;
     }
+    // Forward cancel to parent
+    cancel(sub) {
+        super.cancel(sub);
+        this.parent.cancel(sub);
+    }
     close() {
         var _a;
         (_a = this._sub) === null || _a === void 0 ? void 0 : _a.cancel();

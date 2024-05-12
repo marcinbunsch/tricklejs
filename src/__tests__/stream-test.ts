@@ -418,6 +418,20 @@ describe("Stream", () => {
       await flush();
       expect(listener).toHaveBeenCalledWith(4);
     });
+
+    it("forwards cancel to parent", async () => {
+      const cancel = jest.fn();
+      stream.addEventListener("onCancel", cancel);
+      const mapped = stream.map((i) => i * i);
+      const listener = jest.fn();
+      const sub = mapped.listen(listener);
+      stream.add(2);
+      await flush();
+      expect(listener).toHaveBeenCalledWith(4);
+      sub.cancel();
+      await flush();
+      expect(cancel).toHaveBeenCalled();
+    });
   });
 
   describe("asyncMap", () => {

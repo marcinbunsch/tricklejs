@@ -2,6 +2,7 @@ import { StreamSubscriptionActions } from "./stream_subscription";
 export interface StreamInterface<T> {
     listen(onData: StreamListener<T>, callbacks?: StreamListenOptions): StreamSubscriptionActions;
     asBroadcastStream(): StreamInterface<T>;
+    close(): void;
     every(condition: (data: T) => boolean): Promise<boolean>;
     first(): Promise<T>;
     firstWhere(condition: (data: T) => boolean): Promise<T>;

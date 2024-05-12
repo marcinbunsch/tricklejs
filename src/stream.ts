@@ -715,6 +715,12 @@ class _filteringStream extends Stream<any> {
     super();
   }
 
+  // Forward cancel to parent - it might need to know nothing is listening
+  cancel(sub: StreamSubscription<any>): void {
+    super.cancel(sub);
+    this.parent.cancel(sub);
+  }
+
   close() {
     this._sub?.cancel();
     this._sub = null;
