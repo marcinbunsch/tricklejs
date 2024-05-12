@@ -1,4 +1,3 @@
-node_modules/
-dist/
+t node_modules/
 coverage/
 docs/
