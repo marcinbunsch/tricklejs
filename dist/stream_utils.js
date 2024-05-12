@@ -11,8 +11,7 @@ exports.cancelAndFulfill = cancelAndFulfill;
 /** @ignore utility for running a function on the next tick **/
 /* istanbul ignore next*/
 const nextTick = function (fn) {
-    var _a;
-    const nextTick = ((_a = global === null || global === void 0 ? void 0 : global.process) === null || _a === void 0 ? void 0 : _a.nextTick) || Promise.resolve().then;
+    const nextTick = Promise.resolve().then;
     nextTick(fn);
 };
 exports.nextTick = nextTick;
