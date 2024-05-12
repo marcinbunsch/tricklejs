@@ -423,8 +423,7 @@ describe("Stream", () => {
   describe("asyncMap", () => {
     it("produces mapped values from the initial stream", async () => {
       const mapped = stream.asyncMap(async (i) => {
-        const randomTime = Math.floor(Math.random() * 20);
-        await new Promise((resolve) => setTimeout(resolve, randomTime));
+        await new Promise((resolve) => setTimeout(resolve, i));
         return i * i;
       });
       const listener = jest.fn();
@@ -435,21 +434,12 @@ describe("Stream", () => {
       });
       stream.add(1);
       await flush();
+      stream.add(25);
+      await flush();
       stream.add(2);
       await flush();
-      stream.add(3);
-      await flush();
-      stream.add(4);
-      await flush();
-      stream.add(5);
-      await flush();
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      expect(results).toEqual([1, 4, 9, 16, 25]);
-      expect(listener).toHaveBeenCalledWith(1);
-      expect(listener).toHaveBeenCalledWith(4);
-      expect(listener).toHaveBeenCalledWith(9);
-      expect(listener).toHaveBeenCalledWith(16);
-      expect(listener).toHaveBeenCalledWith(25);
+      await new Promise((resolve) => setTimeout(resolve, 50)); // wait for asyncMap to finish
+      expect(results).toEqual([1, 625, 4]);
     });
   });
 

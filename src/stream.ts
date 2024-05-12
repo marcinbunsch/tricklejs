@@ -317,8 +317,8 @@ export default class Stream<T> implements StreamInterface<T> {
    * @template T original data type
    * @template U new data type
    */
-  map(transform: (data: T) => any): StreamInterface<T> {
-    return new _mapStream<T, any>(this, transform);
+  map<M>(transform: (data: T) => M): StreamInterface<M> {
+    return new _mapStream<T, M>(this, transform);
   }
 
   /**
