@@ -7,7 +7,8 @@ export interface StreamInterface<T> {
     firstWhere(condition: (data: T) => boolean): Promise<T>;
     forEach(fn: (data: T) => void): Promise<void>;
     reduce(reducer: (prev: any, next: T) => any): Promise<any>;
-    map(transform: (data: T) => any): StreamInterface<T>;
+    map<U>(transform: (data: T) => U): StreamInterface<U>;
+    asyncMap<U>(transform: (data: T) => U): StreamInterface<U>;
     take(n: number): StreamInterface<T>;
     takeWhile(condition: (data: T) => boolean): StreamInterface<T>;
     skip(n: number): StreamInterface<T>;

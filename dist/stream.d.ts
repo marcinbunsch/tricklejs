@@ -149,7 +149,7 @@ export default class Stream<T> implements StreamInterface<T> {
      * @template T original data type
      * @template U new data type
      */
-    map(transform: (data: T) => any): StreamInterface<T>;
+    map<M>(transform: (data: T) => M): StreamInterface<M>;
     /**
      * Derives new stream that emits mapped values, accepting promises.
      *
