@@ -20,8 +20,7 @@ export const cancelAndFulfill = function (
 /** @ignore utility for running a function on the next tick **/
 /* istanbul ignore next*/
 export const nextTick = function (fn: () => any) {
-  const nextTick = Promise.resolve().then;
-  nextTick(fn);
+  Promise.resolve().then(fn);
 };
 
 /** @ignore utility for creating a *data* StreamMessage **/

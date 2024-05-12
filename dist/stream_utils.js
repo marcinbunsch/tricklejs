@@ -11,8 +11,7 @@ exports.cancelAndFulfill = cancelAndFulfill;
 /** @ignore utility for running a function on the next tick **/
 /* istanbul ignore next*/
 const nextTick = function (fn) {
-    const nextTick = Promise.resolve().then;
-    nextTick(fn);
+    Promise.resolve().then(fn);
 };
 exports.nextTick = nextTick;
 /** @ignore utility for creating a *data* StreamMessage **/
