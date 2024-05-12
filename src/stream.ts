@@ -698,8 +698,8 @@ class _takeWhileStream<T> extends _filteringStream {
         super.add(data);
         return;
       }
-    } catch (e) {
-      super.addError(e);
+    } catch (e: any) {
+      super.addError(e as Error);
     }
     this.close();
   }
@@ -731,9 +731,9 @@ class _skipWhileStream<T> extends _filteringStream {
   add(data: T) {
     try {
       if (this._isSkipping && this.condition(data)) return;
-    } catch (e) {
+    } catch (e: any) {
       this._isSkipping = false;
-      return super.addError(e);
+      return super.addError(e as Error);
     }
     this._isSkipping = false;
     super.add(data);
@@ -756,8 +756,8 @@ class _whereStream<T> extends _filteringStream {
       if (this.condition(data)) {
         super.add(data);
       }
-    } catch(e) {
-      super.addError(e);
+    } catch(e: any) {
+      super.addError(e as Error);
     }
   }
 }
@@ -781,8 +781,8 @@ class _distinctStream<T> extends _filteringStream {
         this._oldVal = data
         super.add(data);
       }
-    } catch(e) {
-      super.addError(e);
+    } catch(e: any) {
+      super.addError(e as Error);
     }
   }
 }

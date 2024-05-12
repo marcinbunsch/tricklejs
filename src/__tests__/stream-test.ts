@@ -724,7 +724,7 @@ describe("Stream", () => {
       expect.assertions(1);
       try {
         await stream.forEach(handler);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toBe("dangit");
       }
     });
@@ -736,7 +736,7 @@ describe("Stream", () => {
       expect.assertions(1);
       try {
         await stream.forEach(handler);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toBe("dangit");
       }
     });
@@ -775,7 +775,7 @@ describe("Stream", () => {
       await flush();
       try {
         await stream.reduce(reducer, 10);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toBe("whopes");
       }
     });
@@ -790,7 +790,7 @@ describe("Stream", () => {
       await flush();
       try {
         await stream.reduce(reducer, 10);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toBe("crap");
       }
     });
@@ -815,7 +815,7 @@ describe("Stream", () => {
       expect.assertions(1);
       try {
         await stream.toArray();
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toBe("error");
       }
     });
@@ -840,7 +840,7 @@ describe("Stream", () => {
       expect.assertions(1);
       try {
         await stream.toSet();
-      } catch (e) {
+      } catch (e: any) {
         expect(e.message).toBe("error");
       }
     });
