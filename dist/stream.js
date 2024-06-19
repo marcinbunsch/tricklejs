@@ -647,7 +647,7 @@ class _filteringStream extends Stream {
         this.parent = parent;
         this._sub = null;
     }
-    // Forward cancel to parent
+    // Forward cancel to parent - it might need to know nothing is listening
     cancel(sub) {
         super.cancel(sub);
         this.parent.cancel(sub);

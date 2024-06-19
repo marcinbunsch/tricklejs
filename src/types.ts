@@ -13,7 +13,7 @@ export interface StreamInterface<T> {
   forEach(fn: (data: T) => void): Promise<void>;
   reduce(reducer: (prev: any, next: T) => any): Promise<any>;
   map<U>(transform: (data: T) => U): StreamInterface<U>;
-  asyncMap<U>(transform: (data: T) => U): StreamInterface<U>;
+  asyncMap<U>(transform: (data: T) => Promise<U>): StreamInterface<U>;
   take(n: number): StreamInterface<T>;
   takeWhile(condition: (data: T) => boolean): StreamInterface<T>;
   skip(n: number): StreamInterface<T>;
