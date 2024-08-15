@@ -22,6 +22,7 @@ export interface StreamInterface<T> {
   toArray(): Promise<Array<T>>;
   toSet(): Promise<Set<T>>;
   isBroadcast: boolean;
+  isClosed: boolean;
 }
 /**
  * streamMessageType - the types a message can be
