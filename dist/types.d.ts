@@ -19,6 +19,8 @@ export interface StreamInterface<T> {
     toSet(): Promise<Set<T>>;
     isBroadcast: boolean;
     isClosed: boolean;
+    addEventListener(event: "onListen" | "onPause" | "onResume" | "onCancel", callback: StreamCallback): void;
+    removeEventListener(event: "onListen" | "onPause" | "onResume" | "onCancel", callback: StreamCallback): void;
 }
 /**
  * streamMessageType - the types a message can be
