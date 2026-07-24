@@ -1,6 +1,6 @@
-import StreamSubscription from "./stream_subscription";
-import StreamController from "./stream_controller";
-import { StreamSubscriptionActions } from "./stream_subscription";
+import StreamSubscription from "./stream_subscription.js";
+import StreamController from "./stream_controller.js";
+import { StreamSubscriptionActions } from "./stream_subscription.js";
 
 import {
   StreamMessageType,
@@ -9,7 +9,7 @@ import {
   StreamListenOptions,
   StreamCallback,
   StreamInterface,
-} from "./types";
+} from "./types.js";
 
 import {
   createDataMessage,
@@ -17,7 +17,7 @@ import {
   cancelAndFulfill,
   nextTick,
   createDoneMessage,
-} from "./stream_utils";
+} from "./stream_utils.js";
 
 /**
  * Error to be thrown when adding to a closed stream

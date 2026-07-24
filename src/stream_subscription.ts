@@ -3,9 +3,9 @@ import {
   StreamListenOptions,
   StreamMessage,
   StreamMessageType,
-} from "./types";
+} from "./types.js";
 
-import Stream from "./stream";
+import Stream from "./stream.js";
 
 export interface StreamSubscriptionActions {
   pause: () => void;

@@ -1,6 +1,6 @@
-import StreamSubscription from "./stream_subscription";
-import { StreamSubscriptionActions } from "./stream_subscription";
-import { StreamListener, StreamListenOptions, StreamCallback, StreamInterface } from "./types";
+import StreamSubscription from "./stream_subscription.js";
+import { StreamSubscriptionActions } from "./stream_subscription.js";
+import { StreamListener, StreamListenOptions, StreamCallback, StreamInterface } from "./types.js";
 /** @ignore */
 type StreamEventsMap = {
     [key: string]: Array<StreamCallback>;

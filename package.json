@@ -1,12 +1,26 @@
 {
   "name": "tricklejs",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "",
   "main": "./dist/index.js",
+  "module": "./dist/esm/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/index.js"
+    },
+    "./dist/*.js": "./dist/*.js",
+    "./dist/*": "./dist/*.js",
+    "./package.json": "./package.json"
+  },
   "prepublish": "npm start",
   "scripts": {
-    "start": "npm run clean:dist && tsc",
+    "start": "npm run build",
+    "build": "npm run clean:dist && npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc",
+    "build:esm": "tsc -p tsconfig.esm.json && node scripts/write-esm-package.js",
     "docs": "npm run clean:docs && typedoc src",
     "test": "jest",
     "coverage": "jest --coverage",

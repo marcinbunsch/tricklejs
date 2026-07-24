@@ -1,7 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const types_js_1 = require("./types.js");
-class StreamSubscription {
+import { StreamMessageType, } from "./types.js";
+export default class StreamSubscription {
     constructor(stream, onData, listenOptions = {}) {
         this.stream = stream;
         this.onData = onData;
@@ -14,10 +12,10 @@ class StreamSubscription {
             return;
         this._buffer.forEach((m) => {
             switch (m.type) {
-                case types_js_1.StreamMessageType.Data:
+                case StreamMessageType.Data:
                     this.onData(m.data);
                     break;
-                case types_js_1.StreamMessageType.Error:
+                case StreamMessageType.Error:
                     if (this.listenOptions.onError) {
                         this.listenOptions.onError(m.data);
                     }
@@ -25,7 +23,7 @@ class StreamSubscription {
                         this.cancel();
                     }
                     break;
-                case types_js_1.StreamMessageType.Done:
+                case StreamMessageType.Done:
                     if (this.listenOptions.onDone) {
                         this.listenOptions.onDone();
                     }
@@ -64,4 +62,3 @@ class StreamSubscription {
         return this._isPaused;
     }
 }
-exports.default = StreamSubscription;

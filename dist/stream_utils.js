@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createDoneMessage = exports.createErrorMessage = exports.createDataMessage = exports.nextTick = exports.cancelAndFulfill = void 0;
-const types_1 = require("./types");
+const types_js_1 = require("./types.js");
 /** @ignore utility for handling promises: cancels subscription and (resolve | rejects) the value */
 const cancelAndFulfill = function (v, sub, fulfill) {
     sub.cancel();
@@ -16,7 +16,7 @@ const nextTick = function (fn) {
 exports.nextTick = nextTick;
 /** @ignore utility for creating a *data* StreamMessage **/
 const createDataMessage = function (data) {
-    return { type: types_1.StreamMessageType.Data, data };
+    return { type: types_js_1.StreamMessageType.Data, data };
 };
 exports.createDataMessage = createDataMessage;
 /** @ignore utility for creating an *error* StreamMessage **/
@@ -28,11 +28,11 @@ const createErrorMessage = function (m) {
     else {
         err = m;
     }
-    return { type: types_1.StreamMessageType.Error, data: err };
+    return { type: types_js_1.StreamMessageType.Error, data: err };
 };
 exports.createErrorMessage = createErrorMessage;
 /** @ignore utility for creating a *done* StreamMessage **/
 const createDoneMessage = function () {
-    return { type: types_1.StreamMessageType.Done };
+    return { type: types_js_1.StreamMessageType.Done };
 };
 exports.createDoneMessage = createDoneMessage;

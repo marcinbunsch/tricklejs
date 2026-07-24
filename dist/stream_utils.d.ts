@@ -1,5 +1,5 @@
-import { StreamSubscriptionActions } from "./stream_subscription";
-import { StreamMessageError, StreamMessageData, StreamMessageDone } from "./types";
+import { StreamSubscriptionActions } from "./stream_subscription.js";
+import { StreamMessageError, StreamMessageData, StreamMessageDone } from "./types.js";
 /** @ignore utility for handling promises: cancels subscription and (resolve | rejects) the value */
 export declare const cancelAndFulfill: (v: any, sub: StreamSubscriptionActions, fulfill: (v: any) => void) => void;
 /** @ignore utility for running a function on the next tick **/

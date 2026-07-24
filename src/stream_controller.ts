@@ -1,5 +1,5 @@
-import Stream from "./stream";
-import { StreamCallback, StreamInterface } from "./types";
+import Stream from "./stream.js";
+import { StreamCallback, StreamInterface } from "./types.js";
 
 interface constructorParams {
   broadcast: boolean;

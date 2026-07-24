@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,14 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const stream_subscription_js_1 = __importDefault(require("./stream_subscription.js"));
-const stream_controller_js_1 = __importDefault(require("./stream_controller.js"));
-const types_js_1 = require("./types.js");
-const stream_utils_js_1 = require("./stream_utils.js");
+import StreamSubscription from "./stream_subscription.js";
+import StreamController from "./stream_controller.js";
+import { StreamMessageType, } from "./types.js";
+import { createDataMessage, createErrorMessage, cancelAndFulfill, nextTick, createDoneMessage, } from "./stream_utils.js";
 /**
  * Error to be thrown when adding to a closed stream
  */
@@ -35,7 +30,7 @@ const ErrorForListen = new Error("cannot have more than one listener on the stre
  * Stream
  * @template T - the type for the data in the stream
  */
-class Stream {
+export default class Stream {
     constructor() {
         this._subscription = null;
         /** The buffer containing the stream messages */
@@ -54,7 +49,7 @@ class Stream {
      * @template T - the type of the data resolved by the promise
      */
     static fromPromise(promise) {
-        const streamController = new stream_controller_js_1.default();
+        const streamController = new StreamController();
         promise
             .then((value) => {
             streamController.add(value);
@@ -75,7 +70,7 @@ class Stream {
      * @template T the type of data resolved by the promises
      */
     static fromPromises(promises) {
-        const streamController = new stream_controller_js_1.default();
+        const streamController = new StreamController();
         let count = 0;
         const onData = (data) => {
             if (!streamController.isClosed) {
@@ -114,7 +109,7 @@ class Stream {
     _emit() {
         if (this.isPaused || !this._subscription)
             return;
-        (0, stream_utils_js_1.nextTick)(() => {
+        nextTick(() => {
             this._buffer.forEach((message) => {
                 if (this._subscription) {
                     this._subscription.messageHandler(message);
@@ -132,7 +127,7 @@ class Stream {
      * @param name - the event name
      */
     _callEventListeners(name) {
-        (0, stream_utils_js_1.nextTick)(() => {
+        nextTick(() => {
             if (this._eventCallbacks[name] && this._eventCallbacks[name].length) {
                 this._eventCallbacks[name].forEach((c) => c());
             }
@@ -158,7 +153,7 @@ class Stream {
         if (this._subscription) {
             throw ErrorForListen;
         }
-        this._subscription = new stream_subscription_js_1.default(this, onData, callbacks);
+        this._subscription = new StreamSubscription(this, onData, callbacks);
         this._callEventListeners("onListen");
         this._emit();
         return this._subscription;
@@ -172,7 +167,7 @@ class Stream {
     add(data) {
         if (this.isClosed)
             throw ErrorForAdd;
-        this._buffer.push((0, stream_utils_js_1.createDataMessage)(data));
+        this._buffer.push(createDataMessage(data));
         this._emit();
     }
     /**
@@ -184,7 +179,7 @@ class Stream {
     addError(message) {
         if (this.isClosed)
             throw ErrorForAddError;
-        this._buffer.push((0, stream_utils_js_1.createErrorMessage)(message));
+        this._buffer.push(createErrorMessage(message));
         this._emit();
     }
     /**
@@ -219,7 +214,7 @@ class Stream {
      */
     close() {
         this._isClosed = true;
-        this._buffer.push((0, stream_utils_js_1.createDoneMessage)());
+        this._buffer.push(createDoneMessage());
         this._emit();
     }
     /**
@@ -299,7 +294,7 @@ class Stream {
      * @template U new data type
      */
     asyncMap(transform) {
-        const streamController = new stream_controller_js_1.default();
+        const streamController = new StreamController();
         streamController.onListen = () => {
             const subscription = this.listen((data) => __awaiter(this, void 0, void 0, function* () {
                 let newValue;
@@ -440,9 +435,9 @@ class Stream {
                         return;
                 }
                 catch (_) { }
-                (0, stream_utils_js_1.cancelAndFulfill)(false, sub, reject);
+                cancelAndFulfill(false, sub, reject);
             }, {
-                onError: (e) => (0, stream_utils_js_1.cancelAndFulfill)(e, sub, reject),
+                onError: (e) => cancelAndFulfill(e, sub, reject),
                 onDone: () => resolve(true),
             });
         });
@@ -459,9 +454,9 @@ class Stream {
     first() {
         return new Promise((resolve, reject) => {
             const sub = this.listen((data) => {
-                (0, stream_utils_js_1.cancelAndFulfill)(data, sub, resolve);
+                cancelAndFulfill(data, sub, resolve);
             }, {
-                onError: (e) => (0, stream_utils_js_1.cancelAndFulfill)(e, sub, reject),
+                onError: (e) => cancelAndFulfill(e, sub, reject),
                 onDone: () => reject(new Error()),
             });
         });
@@ -480,14 +475,14 @@ class Stream {
             const sub = this.listen((data) => {
                 try {
                     if (condition(data))
-                        return (0, stream_utils_js_1.cancelAndFulfill)(data, sub, resolve);
+                        return cancelAndFulfill(data, sub, resolve);
                 }
                 catch (e) {
-                    (0, stream_utils_js_1.cancelAndFulfill)(e, sub, reject);
+                    cancelAndFulfill(e, sub, reject);
                 }
             }, {
-                onError: (e) => (0, stream_utils_js_1.cancelAndFulfill)(e, sub, reject),
-                onDone: () => (0, stream_utils_js_1.cancelAndFulfill)(null, sub, reject),
+                onError: (e) => cancelAndFulfill(e, sub, reject),
+                onDone: () => cancelAndFulfill(null, sub, reject),
             });
         });
     }
@@ -504,11 +499,11 @@ class Stream {
                     listener(data);
                 }
                 catch (e) {
-                    (0, stream_utils_js_1.cancelAndFulfill)(e, sub, reject);
+                    cancelAndFulfill(e, sub, reject);
                 }
             }, {
                 onDone: resolve,
-                onError: (e) => (0, stream_utils_js_1.cancelAndFulfill)(e, sub, reject),
+                onError: (e) => cancelAndFulfill(e, sub, reject),
             });
         });
     }
@@ -534,11 +529,11 @@ class Stream {
                     initialValue = reducer(initialValue, item);
                 }
                 catch (e) {
-                    (0, stream_utils_js_1.cancelAndFulfill)(e, sub, reject);
+                    cancelAndFulfill(e, sub, reject);
                 }
             }, {
                 onDone: () => resolve(initialValue),
-                onError: (e) => (0, stream_utils_js_1.cancelAndFulfill)(e, sub, reject),
+                onError: (e) => cancelAndFulfill(e, sub, reject),
             });
         });
     }
@@ -556,7 +551,7 @@ class Stream {
             const sub = this.listen((data) => {
                 result.push(data);
             }, {
-                onError: (e) => (0, stream_utils_js_1.cancelAndFulfill)(e, sub, reject),
+                onError: (e) => cancelAndFulfill(e, sub, reject),
                 onDone: () => resolve(result),
             });
         });
@@ -574,13 +569,12 @@ class Stream {
             const sub = this.listen((data) => {
                 result.add(data);
             }, {
-                onError: (e) => (0, stream_utils_js_1.cancelAndFulfill)(e, sub, reject),
+                onError: (e) => cancelAndFulfill(e, sub, reject),
                 onDone: () => resolve(result),
             });
         });
     }
 }
-exports.default = Stream;
 /** @ignore */
 class _broadcastStream extends Stream {
     constructor(parent) {
@@ -592,16 +586,16 @@ class _broadcastStream extends Stream {
     add(data) {
         if (this.isClosed)
             throw ErrorForAdd;
-        const message = (0, stream_utils_js_1.createDataMessage)(data);
-        (0, stream_utils_js_1.nextTick)(() => {
+        const message = createDataMessage(data);
+        nextTick(() => {
             this._subscribers.forEach((s) => s.messageHandler(message));
         });
     }
     addError(e) {
         if (this.isClosed)
             throw ErrorForAddError;
-        const error = (0, stream_utils_js_1.createErrorMessage)(e);
-        (0, stream_utils_js_1.nextTick)(() => {
+        const error = createErrorMessage(e);
+        nextTick(() => {
             this._subscribers.forEach((s) => s.messageHandler(error));
         });
     }
@@ -616,9 +610,9 @@ class _broadcastStream extends Stream {
         this._isClosed = true;
         (_a = this._parentSubscription) === null || _a === void 0 ? void 0 : _a.cancel();
         this._parentSubscription = null;
-        (0, stream_utils_js_1.nextTick)(() => {
+        nextTick(() => {
             this._subscribers.forEach((s) => {
-                s.messageHandler({ type: types_js_1.StreamMessageType.Done });
+                s.messageHandler({ type: StreamMessageType.Done });
             });
         });
     }
@@ -629,7 +623,7 @@ class _broadcastStream extends Stream {
                 onDone: this.close.bind(this),
             });
         }
-        const sub = new stream_subscription_js_1.default(this, onData, callbacks);
+        const sub = new StreamSubscription(this, onData, callbacks);
         this._subscribers.add(sub);
         this._callEventListeners("onListen");
         if (this.isClosed)

@@ -1,4 +1,4 @@
-import { StreamCallback, StreamInterface } from "./types";
+import { StreamCallback, StreamInterface } from "./types.js";
 interface constructorParams {
     broadcast: boolean;
     onListen?: StreamCallback;

@@ -1,5 +1,5 @@
-import { StreamListener, StreamListenOptions, StreamMessage } from "./types";
-import Stream from "./stream";
+import { StreamListener, StreamListenOptions, StreamMessage } from "./types.js";
+import Stream from "./stream.js";
 export interface StreamSubscriptionActions {
     pause: () => void;
     resume: () => void;

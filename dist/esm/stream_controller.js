@@ -1,9 +1,4 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const stream_js_1 = __importDefault(require("./stream.js"));
+import Stream from "./stream.js";
 // to mirror the dart stream interface, we want to get rid of the extra
 // methods created to add and listen to events on the stream directly.
 /** @ignore */
@@ -25,7 +20,7 @@ const _validProp = (prop) => {
 /** @ignore */
 const createStreamProxy = (stream) => {
     const target = {};
-    Object.getOwnPropertyNames(stream_js_1.default.prototype).forEach((prop) => {
+    Object.getOwnPropertyNames(Stream.prototype).forEach((prop) => {
         if (!_validProp(prop))
             return;
         if (typeof stream[prop] === "function") {
@@ -41,7 +36,7 @@ const createStreamProxy = (stream) => {
     });
     return target;
 };
-class StreamController {
+export default class StreamController {
     /**
      * StreamController Constructor
      *
@@ -73,7 +68,7 @@ class StreamController {
                 this.onCancel();
             }
         };
-        this._srcStream = new stream_js_1.default();
+        this._srcStream = new Stream();
         this._sink = new _streamSink(this);
         if (params.broadcast) {
             this._dstStream = this._srcStream.asBroadcastStream();
@@ -134,7 +129,6 @@ class StreamController {
         return new StreamController({ broadcast: true });
     }
 }
-exports.default = StreamController;
 /**
  * Object that only contains add, addError and close methods
  * for a given stream.

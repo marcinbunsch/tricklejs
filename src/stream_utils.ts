@@ -1,11 +1,11 @@
-import Stream from "./stream";
-import { StreamSubscriptionActions } from "./stream_subscription";
+import Stream from "./stream.js";
+import { StreamSubscriptionActions } from "./stream_subscription.js";
 import {
   StreamMessageError,
   StreamMessageData,
   StreamMessageType,
   StreamMessageDone,
-} from "./types";
+} from "./types.js";
 
 /** @ignore utility for handling promises: cancels subscription and (resolve | rejects) the value */
 export const cancelAndFulfill = function (

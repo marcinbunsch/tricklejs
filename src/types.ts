@@ -1,4 +1,4 @@
-import { StreamSubscriptionActions } from "./stream_subscription";
+import { StreamSubscriptionActions } from "./stream_subscription.js";
 
 export interface StreamInterface<T> {
   listen(
